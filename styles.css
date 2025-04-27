@@ -213,6 +213,9 @@ button:active {
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+.hidden {
+    display: none;
+}
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <button id="btn-instalar" style="display:none;">Instalar App</button>
+    <button id="btn-instalar" class="hidden">Instalar App</button>
 
     <main id="app">
         <!-- Contenido dinámico -->
@@ -22,7 +22,7 @@
         <button class="c-nav-item" onclick="mostrarAleatorio()">Aleatorio</button>
         <button class="c-nav-item" onclick="mostrarDatos()">Datos</button>
         <button class="c-nav-item" onclick="mostrarFavoritos()">Favoritos</button>
-        <button class="c-nav-item" onclick="mostrarLista(pokemones)">Lista</button>
+        <button class="c-nav-item" onclick="mostrarLista()">Lista</button>
     </aside>
 
     <script src="JS/api.js"></script>
@@ -33,7 +33,6 @@
     <script src="JS/favoritos.js"></script>
     <script src="JS/detalle.js"></script>
     <script src="JS/sw.js"></script>
-    
 
     <script>
         document.addEventListener("DOMContentLoaded", General);
@@ -52,7 +51,7 @@
 
             // Mostrar el botón personalizado
             const btn = document.getElementById("btn-instalar");
-            if (btn) btn.style.display = "block";
+            if (btn) btn.classList.remove('hidden');
         });
 
         document.getElementById("btn-instalar").addEventListener("click", async () => {
@@ -63,7 +62,7 @@
 
                 // Ya no se necesita el prompt
                 deferredPrompt = null;
-                document.getElementById("btn-instalar").style.display = "none";
+                document.getElementById("btn-instalar").classList.add('hidden');
             }
         });
 
@@ -73,15 +72,9 @@
 
         if (esIOS()) {
             const mensaje = document.createElement("div");
-            mensaje.innerHTML = `
-    <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
-  `;
+            mensaje.innerHTML = `En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.`;
             document.getElementById("btn-instalar").replaceWith(mensaje);
         }
-        navigator.serviceWorker.register('sw.js') // ✅ sin la carpeta JS
-    .then(() => console.log('Service Worker registrado ✅'))
-    .catch(error => console.log('Error al registrar SW:', error));
-
     </script>
 </body>
 
