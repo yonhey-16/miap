@@ -61,7 +61,7 @@ async function filtrarPorGenero(unGenero, series) {
         mostrarLista(series); // Mostrar todas las series si se selecciona "All"
     } else {
         try {
-            const respuesta = await fetch(`https://api.tvmaze.com/shows`);
+            const respuesta = await fetch(`https://api.tvmaze.com/shows/1`);
             const datos = await respuesta.json();
 
             const seriesFiltradas = datos.filter(s => s.genres.includes(unGenero));
