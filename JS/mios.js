@@ -1,3 +1,5 @@
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
 function mostrarMios() {
     const app = document.getElementById("app");
 
