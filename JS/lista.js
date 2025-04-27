@@ -1,4 +1,4 @@
-function mostrarLista(series) {
+function mostrarLista(pokemones) {
     const app = document.getElementById("app");
     app.innerHTML = ""; // Limpia el contenido
 
@@ -9,24 +9,26 @@ function mostrarLista(series) {
     const buscador = document.createElement("input");
     buscador.classList.add("c-buscador");
     buscador.type = "text";
-    buscador.placeholder = "Buscar Serie...";
-    buscador.addEventListener("input", (evento) => buscarSerie(evento, series));
+    buscador.placeholder = "Buscar Pokémon...";
+    buscador.addEventListener("input", (evento) => buscarPoke(evento, pokemones));
 
-    // Crear los botones de filtro por género (ejemplo)
-    const generos = [
-        "All", "Drama", "Comedy", "Action", "Sci-Fi", "Fantasy", "Crime", "Horror", "Thriller"
+    // Crear los botones de filtro por tipo
+    const tipos = [
+        "All", "normal", "fighting", "flying", "poison", "ground", "rock",
+        "bug", "ghost", "steel", "fire", "water", "grass", "electric",
+        "psychic", "ice", "dragon", "dark", "fairy", "stellar", "shadow", "unknown"
     ];
 
-    let listaGeneros = generos.map(genero => 
-        `<button class="filtro-boton" onclick="filtrarPorGenero('${genero}', series)">${genero}</button>`
+    let listaTipos = tipos.map(tipo => 
+        `<button class="filtro-boton" onclick="filtrarPorTipo('${tipo}', pokemones)">${tipo}</button>`
     ).join('');
 
     const filtro = document.createElement("div");
     filtro.classList.add("filtro");
-    filtro.innerHTML = listaGeneros;
+    filtro.innerHTML = listaTipos;
 
-    // Generar la lista inicial de Series
-    seccion.innerHTML = generarLista(series);
+    // Generar la lista inicial de Pokémon
+    seccion.innerHTML = generarLista(pokemones);
 
     // Agregar los elementos al DOM
     app.appendChild(buscador);
@@ -34,42 +36,43 @@ function mostrarLista(series) {
     app.appendChild(seccion);
 }
 
-function generarLista(series) {
-    return series.map(serie => {
+function generarLista(pokemones) {
+    return pokemones.map(pokemon => {
+        let id = pokemon.url.split("/")[6];
         return `
-        <div class="c-lista-serie serie-${serie.id}" onclick="mostrarDetalle('${serie.id}')">
-            <p>${serie.name}</p>
-            <img src="${serie.image?.medium || 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="150" loading="lazy" alt="${serie.name}">
-            <p>${serie.genres.join(', ')}</p>
+        <div class="c-lista-pokemon poke-${id}" onclick="mostrarDetalle('${id}')">
+            <p>#${id}</p>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png" width="auto" height="60" loading="lazy" alt="${pokemon.name}">
+            <p>${pokemon.name}</p>
         </div>`;
     }).join('');
 }
 
-function buscarSerie(evento, series) {
+function buscarPoke(evento, pokemones) {
     const texto = evento.target.value.toLowerCase();
     const listaFiltrada = texto.length >= 3 || !isNaN(texto)
-        ? series.filter(serie => 
-            serie.name.toLowerCase().includes(texto) || serie.id.toString().includes(texto)
+        ? pokemones.filter(pokemon => 
+            pokemon.name.toLowerCase().includes(texto) || pokemon.url.includes("/" + texto)
         )
-        : series;
+        : pokemones;
 
     document.querySelector(".c-lista").innerHTML = generarLista(listaFiltrada);
 }
 
-async function filtrarPorGenero(unGenero, series) {
-    if (unGenero === "All") {
-        mostrarLista(series); // Mostrar todas las series si se selecciona "All"
+async function filtrarPorTipo(untipo, pokemones) {
+    if (untipo === "All") {
+        mostrarLista(pokemones); // Mostrar todos los Pokémon si se selecciona "All"
     } else {
         try {
-            const respuesta = await fetch(`https://api.tvmaze.com/shows`);
+            const respuesta = await fetch(`https://pokeapi.co/api/v2/type/${untipo}`);
             const datos = await respuesta.json();
 
-            const seriesFiltradas = datos.filter(s => s.genres.includes(unGenero));
+            const pokemonesFiltrados = datos.pokemon.map(p => p.pokemon);
 
-            mostrarLista(seriesFiltradas); // Mostrar las series filtradas por género
+            mostrarLista(pokemonesFiltrados); // Mostrar los Pokémon filtrados por tipo
         } catch (error) {
-            console.error("Error al filtrar por género:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar series de género "${unGenero}".</p>`;
+            console.error("Error al filtrar por tipo:", error);
+            document.getElementById("app").innerHTML = `<p>Error al cargar Pokémon de tipo "${untipo}".</p>`;
         }
     }
 }
