@@ -13,20 +13,7 @@
     <button id="btn-instalar" style="display:none;">Instalar App</button>
 
     <main id="app">
-        <!-- Barra de búsqueda -->
-        <div class="c-buscador-container">
-            <input type="text" class="c-buscador" id="searchBar" placeholder="Buscar series...">
-        </div>
-
         <!-- Contenido dinámico -->
-        <div class="filtro">
-            <button class="filterButton" data-filter="comedia">Comedia</button>
-            <button class="filterButton" data-filter="drama">Drama</button>
-            <button class="filterButton" data-filter="accion">Acción</button>
-        </div>
-        <div id="contenido-filtrado">
-            <!-- Aquí se mostrarán las series filtradas -->
-        </div>
     </main>
 
     <aside class="c-nav">
@@ -46,43 +33,11 @@
     <script src="JS/favoritos.js"></script>
     <script src="JS/detalle.js"></script>
     <script src="JS/sw.js"></script>
+    
 
     <script>
-        // Event listener para la barra de búsqueda
-        document.addEventListener("DOMContentLoaded", () => {
-            const searchBar = document.getElementById("searchBar");
+        document.addEventListener("DOMContentLoaded", General);
 
-            searchBar.addEventListener("input", function(event) {
-                const query = event.target.value.toLowerCase();
-                buscarSeries(query);
-            });
-
-            // Función para filtrar las series
-            const filterButtons = document.querySelectorAll(".filterButton");
-
-            filterButtons.forEach(button => {
-                button.addEventListener("click", function(event) {
-                    const filterType = event.target.getAttribute("data-filter");
-                    filtrarSeriesPorTipo(filterType);
-                });
-            });
-        });
-
-        // Función para buscar series
-        function buscarSeries(query) {
-            // Aquí puedes hacer el filtrado de series por nombre, por ejemplo:
-            console.log("Buscando series con el término: ", query);
-            // Lógica de búsqueda de series
-        }
-
-        // Función para filtrar las series por tipo
-        function filtrarSeriesPorTipo(tipo) {
-            // Aquí puedes hacer el filtrado de series por tipo
-            console.log("Filtrando series por tipo: ", tipo);
-            // Lógica para filtrar las series según el tipo
-        }
-
-        // Lógica para los Service Workers
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
                 .then(() => console.log('Service Worker registrado ✅'))
@@ -119,10 +74,14 @@
         if (esIOS()) {
             const mensaje = document.createElement("div");
             mensaje.innerHTML = `
-                <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
-            `;
+    <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
+  `;
             document.getElementById("btn-instalar").replaceWith(mensaje);
         }
+        navigator.serviceWorker.register('sw.js') // ✅ sin la carpeta JS
+    .then(() => console.log('Service Worker registrado ✅'))
+    .catch(error => console.log('Error al registrar SW:', error));
+
     </script>
 </body>
 
