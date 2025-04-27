@@ -11,7 +11,7 @@ const toggleFavorito = (id, nombre) => {
         favoritos.push({ 
             id, 
             nombre, 
-            url: ` https://api.tvmaze.com/search/shows?q=office${id}` 
+            url: `https://api.tvmaze.com${id}` 
         });
         document.getElementById(`corazon-${id}`).textContent = '❤️';
     }
@@ -34,7 +34,7 @@ const actualizarIconoFavorito = (id) => {
 
 async function mostrarDetalle(id) {
     id = Number(id);
-    const res = await fetch(` https://api.tvmaze.com/search/shows?q=office${id}`);
+    const res = await fetch(`https://api.tvmaze.com${id}`);
     const data = await res.json();
 
     const app = document.getElementById("app");
