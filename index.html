@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miap</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+    <button id="btn-instalar" style="display:none;">Instalar App</button>
+
+    <main id="app">
+        <!-- Contenido dinámico -->
+    </main>
+
+    <aside class="c-nav">
+        <button class="c-nav-item" onclick="General()">Home</button>
+        <button class="c-nav-item" onclick="mostrarMios()">Mios</button>
+        <button class="c-nav-item" onclick="mostrarAleatorio()">Aleatorio</button>
+        <button class="c-nav-item" onclick="mostrarDatos()">Datos</button>
+        <button class="c-nav-item" onclick="mostrarFavoritos()">Favoritos</button>
+        <button class="c-nav-item" onclick="mostrarLista(pokemones)">Lista</button>
+    </aside>
+
+    <script src="JS/api.js"></script>
+    <script src="JS/lista.js"></script>
+    <script src="JS/mios.js"></script>
+    <script src="JS/datos.js"></script>
+    <script src="JS/aleatorio.js"></script>
+    <script src="JS/favoritos.js"></script>
+    <script src="JS/detalle.js"></script>
+    <script src="JS/sw.js"></script>
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", General);
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('Service Worker registrado ✅'))
+                .catch(error => console.log('Error al registrar SW:', error));
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault(); // Evita que aparezca automáticamente
+            deferredPrompt = e;
+
+            // Mostrar el botón personalizado
+            const btn = document.getElementById("btn-instalar");
+            if (btn) btn.style.display = "block";
+        });
+
+        document.getElementById("btn-instalar").addEventListener("click", async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt(); // Muestra el diálogo
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log("Resultado de instalación:", outcome);
+
+                // Ya no se necesita el prompt
+                deferredPrompt = null;
+                document.getElementById("btn-instalar").style.display = "none";
+            }
+        });
+
+        function esIOS() {
+            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+        }
+
+        if (esIOS()) {
+            const mensaje = document.createElement("div");
+            mensaje.innerHTML = `
+    <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
+  `;
+            document.getElementById("btn-instalar").replaceWith(mensaje);
+        }
+        navigator.serviceWorker.register('sw.js') // ✅ sin la carpeta JS
+    .then(() => console.log('Service Worker registrado ✅'))
+    .catch(error => console.log('Error al registrar SW:', error));
+
+    </script>
+</body>
+
+</html>
