@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>miap</title>
+    <title>TV Shows</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -17,26 +17,21 @@
     </main>
 
     <aside class="c-nav">
-        <button class="c-nav-item" onclick="General()">Home</button>
-        <button class="c-nav-item" onclick="mostrarMios()">Mios</button>
-        <button class="c-nav-item" onclick="mostrarAleatorio()">Aleatorio</button>
-        <button class="c-nav-item" onclick="mostrarDatos()">Datos</button>
-        <button class="c-nav-item" onclick="mostrarFavoritos()">Favoritos</button>
-        <button class="c-nav-item" onclick="mostrarLista(pokemones)">Lista</button>
+        <button class="c-nav-item" onclick="mostrarLista()">Todos</button>
+        <button class="c-nav-item" onclick="mostrarPorGenero('comedy')">Comedia</button>
+        <button class="c-nav-item" onclick="mostrarPorGenero('drama')">Drama</button>
+        <button class="c-nav-item" onclick="mostrarPorGenero('action')">Acción</button>
+        <button class="c-nav-item" onclick="mostrarPorGenero('romance')">Romántico</button>
     </aside>
 
     <script src="JS/api.js"></script>
     <script src="JS/lista.js"></script>
-    <script src="JS/mios.js"></script>
-    <script src="JS/datos.js"></script>
-    <script src="JS/aleatorio.js"></script>
     <script src="JS/favoritos.js"></script>
     <script src="JS/detalle.js"></script>
     <script src="JS/sw.js"></script>
-    
 
     <script>
-        document.addEventListener("DOMContentLoaded", General);
+        document.addEventListener("DOMContentLoaded", mostrarLista);
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
@@ -74,14 +69,10 @@
         if (esIOS()) {
             const mensaje = document.createElement("div");
             mensaje.innerHTML = `
-    <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
-  `;
+            <p>En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.</p>
+            `;
             document.getElementById("btn-instalar").replaceWith(mensaje);
         }
-        navigator.serviceWorker.register('sw.js') // ✅ sin la carpeta JS
-    .then(() => console.log('Service Worker registrado ✅'))
-    .catch(error => console.log('Error al registrar SW:', error));
-
     </script>
 </body>
 
