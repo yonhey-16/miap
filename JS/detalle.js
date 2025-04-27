@@ -11,7 +11,7 @@ const toggleFavorito = (id, nombre) => {
         favoritos.push({ 
             id, 
             nombre, 
-            url: `https://api.tvmaze.com/shows/1${id}` 
+            url: `https://api.tvmaze.com/shows/${id}` 
         });
         document.getElementById(`corazon-${id}`).textContent = '❤️';
     }
@@ -34,7 +34,7 @@ const actualizarIconoFavorito = (id) => {
 
 async function mostrarDetalle(id) {
     id = Number(id);
-    const res = await fetch(`https://api.tvmaze.com/shows/1${id}`);
+    const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
     const data = await res.json();
 
     const app = document.getElementById("app");
