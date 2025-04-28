@@ -13,7 +13,6 @@ self.addEventListener('install', e => {
         '/js/detalle.js',
         '/icons/icon-192.png',
         '/icons/icon-512.png',
-        '/js/tvmaze-api.js', 
       ]);
     })
   );
