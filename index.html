@@ -1,81 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>miap</title>
+    <title>Mi App de Series TVMaze</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icono.png" type="image/png">
 </head>
-
 <body>
-    <button id="btn-instalar" class="hidden">Instalar App</button>
 
-    <main id="app">
-        <!-- Contenido dinámico -->
-    </main>
+    <!-- Splash Screen -->
+    <div id="splash" class="splash-screen">
+        <img src="icono.png" alt="Logo" class="splash-logo">
+        <h1>Bienvenido a SeriesApp</h1>
+    </div>
 
+    <!-- Contenedor Principal -->
+    <header>
+        <input type="text" class="c-buscador" id="inputBuscar" placeholder="Buscar series...">
+        <div class="filtro" id="filtroCategorias"></div>
+    </header>
+
+    <main id="app" class="c-lista"></main>
+
+    <!-- Favoritos -->
+    <section id="favoritos" class="c-lista hidden"></section>
+
+    <!-- Información -->
+    <section id="info" class="hidden">
+        <h2>Sobre esta App</h2>
+        <p>App que muestra series desde TVMaze, puedes buscar, filtrar y agregar a tus favoritos.</p>
+    </section>
+
+    <!-- Menú de navegación -->
     <aside class="c-nav">
-        <button class="c-nav-item" onclick="General()">Home</button>
-        <button class="c-nav-item" onclick="mostrarMios()">Mios</button>
-        <button class="c-nav-item" onclick="mostrarAleatorio()">Aleatorio</button>
-        <button class="c-nav-item" onclick="mostrarDatos()">Datos</button>
+        <button class="c-nav-item" onclick="mostrarHome()">Home</button>
         <button class="c-nav-item" onclick="mostrarFavoritos()">Favoritos</button>
-        <button class="c-nav-item" onclick="mostrarLista()">Lista</button>
+        <button class="c-nav-item" onclick="mostrarBusqueda()">Buscar</button>
+        <button class="c-nav-item" onclick="mostrarInformacion()">Info</button>
     </aside>
 
-    <script src="JS/api.js"></script>
-    <script src="JS/lista.js"></script>
-    <script src="JS/mios.js"></script>
-    <script src="JS/datos.js"></script>
-    <script src="JS/aleatorio.js"></script>
-    <script src="JS/favoritos.js"></script>
-    <script src="JS/detalle.js"></script>
-    <script src="JS/sw.js"></script>
+    <!-- Scripts -->
+    <script src="lista.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", General);
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker registrado ✅'))
-                .catch(error => console.log('Error al registrar SW:', error));
-        }
-
-        let deferredPrompt;
-
-        window.addEventListener("beforeinstallprompt", (e) => {
-            e.preventDefault(); // Evita que aparezca automáticamente
-            deferredPrompt = e;
-
-            // Mostrar el botón personalizado
-            const btn = document.getElementById("btn-instalar");
-            if (btn) btn.classList.remove('hidden');
-        });
-
-        document.getElementById("btn-instalar").addEventListener("click", async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt(); // Muestra el diálogo
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log("Resultado de instalación:", outcome);
-
-                // Ya no se necesita el prompt
-                deferredPrompt = null;
-                document.getElementById("btn-instalar").classList.add('hidden');
-            }
-        });
-
-        function esIOS() {
-            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-        }
-
-        if (esIOS()) {
-            const mensaje = document.createElement("div");
-            mensaje.innerHTML = `En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.`;
-            document.getElementById("btn-instalar").replaceWith(mensaje);
-        }
-    </script>
 </body>
-
 </html>

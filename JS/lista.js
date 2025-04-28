@@ -1,99 +1,145 @@
-// Función principal para mostrar la lista de programas
-function mostrarLista(shows) {
-    const app = document.getElementById("app");
-    app.innerHTML = ""; // Limpia el contenido
+const API_URL = "https://api.tvmaze.com/";
+let seriesGlobal = [];
+let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
-    const seccion = document.createElement("section");
-    seccion.classList.add("c-lista");
+// Mostrar Splash Screen
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('splash').style.display = 'none';
+    }, 1500);
+});
 
-    // Crear el campo de búsqueda
-    const buscador = document.createElement("input");
-    buscador.classList.add("c-buscador");
-    buscador.type = "text";
-    buscador.placeholder = "Buscar programa...";
-    buscador.addEventListener("input", (evento) => buscarShows(evento, shows));
-
-    // Crear los botones de filtro por género (usando categorías de TV)
-    const categorias = [
-        "All", "Drama", "Comedy", "Action", "Romance", "Thriller", "Sci-Fi",
-        "Fantasy", "Documentary", "Mystery", "Horror", "Reality", "Family", "News"
-    ];
-
-    let listaCategorias = categorias.map(categoria => 
-        `<button class="filtro-boton" onclick="filtrarPorCategoria('${categoria}', shows)">${categoria}</button>`
-    ).join('');
-
-    const filtro = document.createElement("div");
-    filtro.classList.add("filtro");
-    filtro.innerHTML = listaCategorias;
-
-    // Generar la lista inicial de shows
-    seccion.innerHTML = generarLista(shows);
-
-    // Agregar los elementos al DOM
-    app.appendChild(buscador);
-    app.appendChild(filtro);
-    app.appendChild(seccion);
-}
-
-// Generar la lista de programas de TV
-function generarLista(shows) {
-    return shows.map(show => {
-        const id = show.id; // Corregido el id, ya que la propiedad id está directamente en show.
-        return `
-        <div class="c-lista-show show-${id}" onclick="mostrarDetalle(${id})">
-            <p>${show.name}</p>
-            <img src="${show.image ? show.image.medium : 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="60" loading="lazy" alt="${show.name}">
-            <p>${show.premiered || 'Año desconocido'}</p>
-        </div>`;
-    }).join('');
-}
-
-// Función para realizar la búsqueda de programas
-function buscarShows(evento, shows) {
-    const texto = evento.target.value.toLowerCase();
-    const listaFiltrada = texto.length >= 3
-        ? shows.filter(show => 
-            show.name.toLowerCase().includes(texto)
-        )
-        : shows;
-
-    document.querySelector(".c-lista").innerHTML = generarLista(listaFiltrada);
-}
-
-// Función para filtrar los shows por categoría
-async function filtrarPorCategoria(categoria, shows) {
-    if (categoria === "All") {
-        mostrarLista(shows); // Mostrar todos los shows si se selecciona "All"
-    } else {
-        try {
-            const respuesta = await fetch(`https://api.tvmaze.com/search/shows?q=${categoria}`);
-            const datos = await respuesta.json();
-
-            // Filtrar los programas que tienen la categoría seleccionada
-            const showsFiltrados = datos.filter(show => 
-                show.show.genres.includes(categoria)
-            );
-
-            mostrarLista(showsFiltrados.map(item => item.show)); // Mostrar los shows filtrados por categoría
-        } catch (error) {
-            console.error("Error al filtrar por categoría:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
-        }
-    }
-}
-
-// Función para obtener todos los shows disponibles
-async function obtenerShows() {
+// Obtener series
+const obtenerSeries = async () => {
     try {
-        const respuesta = await fetch("https://api.tvmaze.com/shows");
-        const datos = await respuesta.json();
-        mostrarLista(datos); // Mostrar la lista de programas
+        const response = await fetch(`${API_URL}shows`);
+        const data = await response.json();
+        seriesGlobal = data;
+        mostrarLista(seriesGlobal);
     } catch (error) {
-        console.error("Error al obtener los programas:", error);
-        document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
+        console.error("Error al cargar series:", error);
     }
-}
+};
 
-// Inicializar la lista de shows al cargar la página
-document.addEventListener("DOMContentLoaded", obtenerShows);
+// Mostrar lista de series
+const mostrarLista = (series) => {
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    series.forEach(serie => {
+        const div = document.createElement('div');
+        div.className = 'c-lista-serie';
+        div.innerHTML = `
+            <img src="${serie.image ? serie.image.medium : 'default.jpg'}" alt="${serie.name}">
+            <h3>${serie.name}</h3>
+            <button onclick="agregarFavorito(${serie.id})">Favorito</button>
+        `;
+        app.appendChild(div);
+    });
+};
+
+// Agregar a favoritos
+const agregarFavorito = (id) => {
+    const serie = seriesGlobal.find(s => s.id === id);
+    if (!favoritos.some(fav => fav.id === id)) {
+        favoritos.push(serie);
+        localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        alert(`${serie.name} agregado a favoritos`);
+    } else {
+        alert(`${serie.name} ya está en favoritos`);
+    }
+};
+
+// Mostrar favoritos
+const mostrarFavoritos = () => {
+    ocultarTodo();
+    const fav = document.getElementById('favoritos');
+    fav.classList.remove('hidden');
+    fav.innerHTML = '';
+
+    if (favoritos.length === 0) {
+        fav.innerHTML = '<h3>No tienes favoritos aún.</h3>';
+        return;
+    }
+
+    favoritos.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'c-unshow';
+        div.innerHTML = `
+            <img src="${f.image ? f.image.medium : 'default.jpg'}" alt="${f.name}">
+            <h3>${f.name}</h3>
+            <button onclick="eliminarFavorito(${f.id})">Eliminar</button>
+        `;
+        fav.appendChild(div);
+    });
+};
+
+// Eliminar favorito
+const eliminarFavorito = (id) => {
+    favoritos = favoritos.filter(f => f.id !== id);
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    mostrarFavoritos();
+};
+
+// Filtro por categoría
+const aplicarFiltro = (categoria) => {
+    if (categoria === 'All') {
+        mostrarLista(seriesGlobal);
+    } else {
+        const filtradas = seriesGlobal.filter(serie => serie.genres.includes(categoria));
+        mostrarLista(filtradas);
+    }
+};
+
+// Buscar series
+const buscarSerie = (e) => {
+    const texto = e.target.value.toLowerCase();
+    const resultado = seriesGlobal.filter(serie => serie.name.toLowerCase().includes(texto));
+    mostrarLista(resultado);
+};
+
+// Mostrar home
+const mostrarHome = () => {
+    ocultarTodo();
+    document.getElementById('app').classList.remove('hidden');
+    mostrarLista(seriesGlobal);
+};
+
+// Mostrar sección búsqueda
+const mostrarBusqueda = () => {
+    ocultarTodo();
+    document.getElementById('app').classList.remove('hidden');
+};
+
+// Mostrar info
+const mostrarInformacion = () => {
+    ocultarTodo();
+    document.getElementById('info').classList.remove('hidden');
+};
+
+// Ocultar todo
+const ocultarTodo = () => {
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('favoritos').classList.add('hidden');
+    document.getElementById('info').classList.add('hidden');
+};
+
+// Crear filtros dinámicamente
+const crearFiltros = () => {
+    const categorias = ["All", "Drama", "Comedy", "Action", "Romance", "Thriller"];
+    const contenedor = document.getElementById('filtroCategorias');
+
+    categorias.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        btn.onclick = () => aplicarFiltro(cat);
+        contenedor.appendChild(btn);
+    });
+};
+
+// Inicializar todo
+document.addEventListener('DOMContentLoaded', () => {
+    obtenerSeries();
+    crearFiltros();
+    document.getElementById('inputBuscar').addEventListener('input', buscarSerie);
+});
