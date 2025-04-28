@@ -1,5 +1,22 @@
-// Función principal para mostrar la lista de programas
-function mostrarLista(shows) {
+// Cambiar el nombre de la función para mostrar la lista
+function mostrarLista() {
+    obtenerShows();  // Llama a la función para obtener los shows de la API
+}
+
+// Función para obtener todos los shows disponibles
+async function obtenerShows() {
+    try {
+        const respuesta = await fetch("https://api.tvmaze.com/shows");
+        const datos = await respuesta.json();
+        mostrarListaDeShows(datos); // Llama a una función para mostrar la lista
+    } catch (error) {
+        console.error("Error al obtener los programas:", error);
+        document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
+    }
+}
+
+// Función para mostrar la lista de shows
+function mostrarListaDeShows(shows) {
     const app = document.getElementById("app");
     app.innerHTML = ""; // Limpia el contenido
 
@@ -48,51 +65,3 @@ function generarLista(shows) {
         </div>`;
     }).join('');
 }
-
-// Función para realizar la búsqueda de programas
-function buscarShows(evento, shows) {
-    const texto = evento.target.value.toLowerCase();
-    const listaFiltrada = texto.length >= 3
-        ? shows.filter(show => 
-            show.name.toLowerCase().includes(texto)
-        )
-        : shows;
-
-    document.querySelector(".c-lista").innerHTML = generarLista(listaFiltrada);
-}
-
-// Función para filtrar los shows por categoría
-async function filtrarPorCategoria(categoria, shows) {
-    if (categoria === "All") {
-        mostrarLista(shows);
-    } else {
-        try {
-            const respuesta = await fetch(`https://api.tvmaze.com/search/shows?q=${categoria}`);
-            const datos = await respuesta.json();
-
-            const showsFiltrados = datos.filter(show => 
-                show.show.genres.includes(categoria)
-            );
-
-            mostrarLista(showsFiltrados.map(item => item.show));
-        } catch (error) {
-            console.error("Error al filtrar por categoría:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
-        }
-    }
-}
-
-// Función para obtener todos los shows disponibles
-async function obtenerShows() {
-    try {
-        const respuesta = await fetch("https://api.tvmaze.com/shows");
-        const datos = await respuesta.json();
-        mostrarLista(datos);
-    } catch (error) {
-        console.error("Error al obtener los programas:", error);
-        document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
-    }
-}
-
-// Inicializar la lista de shows al cargar la página
-document.addEventListener("DOMContentLoaded", obtenerShows);
