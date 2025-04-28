@@ -5,9 +5,11 @@ const toggleFavorito = (id, nombre) => {
     const esFavorito = favoritos.some(show => Number(show.id) === id);
 
     if (esFavorito) {
+        // Eliminar del listado de favoritos
         favoritos = favoritos.filter(s => Number(s.id) !== id);
         document.getElementById(`corazon-${id}`).textContent = '🤍';
     } else {
+        // Añadir a favoritos
         favoritos.push({ 
             id, 
             nombre, 
