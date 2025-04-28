@@ -2,21 +2,29 @@ let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
 function mostrarMios() {
     const app = document.getElementById("app");
-    app.innerHTML = ""; // Limpiar el contenido actual
+    app.innerHTML = ""; // Limpiar contenido
 
     const seccion = document.createElement("section");
     seccion.classList.add("c-lista", "c-mios");
 
     let misShows = "";
 
-    favoritos.forEach(favorito => {
-        misShows += `
-        <div class="c-lista-serie c-mios-show" onclick="mostrarDetalle(${favorito.id})">
-            <p>#${favorito.id}</p>
-            <img src="${favorito.image?.medium || 'https://via.placeholder.com/150'}" width="100" height="140" alt="${favorito.name}">
-            <h3>${favorito.name}</h3>
-        </div>`;
-    });
+    for (let i = 1; i <= totalShows; i++) {
+        const showFavorito = favoritos.find(fav => fav.id === i);
+
+        if (showFavorito) {
+            misShows += `
+            <div class="c-unshow c-mios-show show-${i}" onclick="mostrarDetalle(${i})">
+                <img src="${showFavorito.image?.medium || 'https://via.placeholder.com/150'}" width="auto" height="100" loading="lazy" alt="${showFavorito.name}">
+                <p>${showFavorito.name}</p>
+            </div>`;
+        } else {
+            misShows += `
+            <div class="c-unshow">
+                <p>${i}</p>
+            </div>`;
+        }
+    }
 
     seccion.innerHTML = misShows;
 

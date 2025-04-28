@@ -1,5 +1,5 @@
 let shows = [];
-let totalShows = 0; // Lo vamos a actualizar después
+let totalShows = 1000; // Lo vamos a actualizar después
 
 async function conexionLista() {
     const res = await fetch('https://api.tvmaze.com/shows');
