@@ -1,81 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>miap</title>
+    <title>TV Maze</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
 </head>
-
 <body>
-    <button id="btn-instalar" class="hidden">Instalar App</button>
-
+    <header>
+        <button id="btn-mios">Mis Series</button>
+        <button id="btn-aleatorios">Aleatorios</button>
+    </header>
     <main id="app">
-        <!-- Contenido dinámico -->
+        <!-- El contenido de las series se cargará aquí -->
     </main>
 
-    <aside class="c-nav">
-        <button class="c-nav-item" onclick="General()">Home</button>
-        <button class="c-nav-item" onclick="mostrarMios()">Mios</button>
-        <button class="c-nav-item" onclick="mostrarAleatorio()">Aleatorio</button>
-        <button class="c-nav-item" onclick="mostrarDatos()">Datos</button>
-        <button class="c-nav-item" onclick="mostrarFavoritos()">Favoritos</button>
-        <button class="c-nav-item" onclick="mostrarLista()">Lista</button>
-    </aside>
-
-    <script src="JS/api.js"></script>
-    <script src="JS/lista.js"></script>
-    <script src="JS/mios.js"></script>
-    <script src="JS/datos.js"></script>
-    <script src="JS/aleatorio.js"></script>  <!-- Aquí se incluye aleatorio.js -->
-    <script src="JS/favoritos.js"></script>
-    <script src="JS/detalle.js"></script>
-    <script src="JS/sw.js"></script>
-
+    <script src="js/aleatorio.js"></script>
+    <script src="js/mios.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/detalle.js"></script>
+    <script src="js/lista.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", General);
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker registrado ✅'))
-                .catch(error => console.log('Error al registrar SW:', error));
-        }
-
-        let deferredPrompt;
-
-        window.addEventListener("beforeinstallprompt", (e) => {
-            e.preventDefault(); // Evita que aparezca automáticamente
-            deferredPrompt = e;
-
-            // Mostrar el botón personalizado
-            const btn = document.getElementById("btn-instalar");
-            if (btn) btn.classList.remove('hidden');
+        // Cuando el DOM se haya cargado, inicializamos los eventos de los botones
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("btn-mios").addEventListener("click", mostrarMios);
+            document.getElementById("btn-aleatorios").addEventListener("click", mostrarAleatorio);
         });
-
-        document.getElementById("btn-instalar").addEventListener("click", async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt(); // Muestra el diálogo
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log("Resultado de instalación:", outcome);
-
-                // Ya no se necesita el prompt
-                deferredPrompt = null;
-                document.getElementById("btn-instalar").classList.add('hidden');
-            }
-        });
-
-        function esIOS() {
-            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-        }
-
-        if (esIOS()) {
-            const mensaje = document.createElement("div");
-            mensaje.innerHTML = `En iOS, toca <span style="font-weight:bold;">Compartir</span> y luego "Agregar a pantalla de inicio" para instalar.`;
-            document.getElementById("btn-instalar").replaceWith(mensaje);
-        }
     </script>
 </body>
-
 </html>

@@ -1,68 +1,37 @@
-let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-
-const toggleFavorito = (id, nombre) => {
-    id = Number(id);
-    const esFavorito = favoritos.some(show => Number(show.id) === id);
+function toggleFavorito(id, nombre, imagen) {
+    const esFavorito = favoritos.some(show => show.id === id);
 
     if (esFavorito) {
         // Eliminar del listado de favoritos
-        favoritos = favoritos.filter(s => Number(s.id) !== id);
-        document.getElementById(`corazon-${id}`).textContent = '🤍';
+        favoritos = favoritos.filter(show => show.id !== id);
     } else {
         // Añadir a favoritos
-        favoritos.push({ 
-            id, 
-            nombre, 
-            url: `https://api.tvmaze.com/shows/${id}` 
-        });
-        document.getElementById(`corazon-${id}`).textContent = '❤️';
+        favoritos.push({ id, name: nombre, image: imagen });
     }
 
     // Guardar favoritos en localStorage
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
-};
-
-const actualizarIconoFavorito = (id) => {
-    id = Number(id);
-    const corazonIcono = document.getElementById(`corazon-${id}`);
-    if (!corazonIcono) return;
-
-    if (favoritos.some(show => Number(show.id) === id)) {
-        corazonIcono.textContent = '❤️';
-    } else {
-        corazonIcono.textContent = '🤍';
-    }
-};
+}
 
 async function mostrarDetalle(id) {
-    id = Number(id);
-    const res = await fetch('https://api.tvmaze.com/shows/' + id);
-    const data = await res.json();
-
     const app = document.getElementById("app");
-    const esFavorito = favoritos.some(show => Number(show.id) === id);
+    const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
+    const show = await res.json();
+
+    const esFavorito = favoritos.some(fav => fav.id === id);
 
     const detalle = `
     <section class="c-detalle">
-        <img src="${data.image ? data.image.medium : ''}" alt="${data.name}" height="120" width="auto">
-        <p>${data.name}</p>
-        <p>${data.id}</p>
-        <p>${data.genres.join(', ')}</p>
-        <p>${data.language}</p>
-        <p>${data.summary.replace(/<\/?[^>]+(>|$)/g, "")}</p>
-
-        <button id="favorito-btn-${id}" onclick="toggleFavorito(${id}, '${data.name}')">
-            <span id="corazon-${id}" class="corazon">${esFavorito ? '❤️' : '🤍'}</span> Favorito
+        <img src="${show.image?.medium || 'https://via.placeholder.com/150'}" alt="${show.name}" height="120" width="auto">
+        <h2>${show.name}</h2>
+        <p>ID: ${show.id}</p>
+        <p>Géneros: ${show.genres.join(', ')}</p>
+        <p>${show.summary.replace(/<\/?[^>]+(>|$)/g, "")}</p>
+        <button onclick="toggleFavorito(${show.id}, '${show.name}', ${JSON.stringify(show.image)})">
+            ${esFavorito ? 'Quitar de Favoritos' : 'Añadir a Favoritos'}
         </button>
     </section>
     `;
 
     app.innerHTML = detalle;
-    actualizarIconoFavorito(id);
-}
-
-// Función para mostrar solo el nombre del show
-function mostrarDetalle(nombre){
-    const app = document.getElementById("app");
-    app.innerHTML = nombre;
 }
