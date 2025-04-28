@@ -82,18 +82,3 @@ async function filtrarPorCategoria(categoria, shows) {
         }
     }
 }
-
-// Función para obtener todos los shows disponibles
-async function obtenerShows() {
-    try {
-        const respuesta = await fetch("https://api.tvmaze.com/shows");
-        const datos = await respuesta.json();
-        mostrarLista(datos); // Mostrar la lista de programas
-    } catch (error) {
-        console.error("Error al obtener los programas:", error);
-        document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
-    }
-}
-
-// Inicializar la lista de shows al cargar la página
-document.addEventListener("DOMContentLoaded", obtenerShows);

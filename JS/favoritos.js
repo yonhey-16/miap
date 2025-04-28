@@ -11,7 +11,7 @@ const toggleFavorito = (id, nombre) => {
         favoritos.push({ 
             id, 
             nombre, 
-            url: `https://api.tvmaze.com/shows/${id}`  // Ajusté la URL para que sea válida
+            url: `https://api.tvmaze.com/shows/${id}` 
         });
         document.getElementById(`corazon-${id}`).textContent = '❤️';
     }
