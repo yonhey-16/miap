@@ -41,6 +41,3 @@ async function mostrarAleatorio() {
     showsAleatorios += "</section>";
     app.innerHTML = showsAleatorios;
 }
-
-// Llamar a la función para mostrar los shows aleatorios
-mostrarAleatorio();
