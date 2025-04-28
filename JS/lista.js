@@ -1,110 +1,99 @@
-const categorias = [
-    "All", "Drama", "Comedy", "Action", "Romance", "Thriller", "Sci-Fi",
-    "Fantasy", "Documentary", "Mystery", "Horror", "Reality", "Family", "News"
-];
+// Función principal para mostrar la lista de programas
+function mostrarLista(shows) {
+    const app = document.getElementById("app");
+    app.innerHTML = ""; // Limpia el contenido
 
-const peliculas = [
-    { id: 1, nombre: "The Dark Knight", categoria: "Action", imagen: "url_de_imagen" },
-    { id: 2, nombre: "Inception", categoria: "Sci-Fi", imagen: "url_de_imagen" },
-    { id: 3, nombre: "The Conjuring", categoria: "Horror", imagen: "url_de_imagen" },
-    { id: 4, nombre: "Titanic", categoria: "Romance", imagen: "url_de_imagen" },
-    { id: 5, nombre: "Breaking Bad", categoria: "Drama", imagen: "url_de_imagen" },
-    { id: 6, nombre: "Friends", categoria: "Comedy", imagen: "url_de_imagen" },
-    { id: 7, nombre: "The Witcher", categoria: "Fantasy", imagen: "url_de_imagen" },
-    { id: 8, nombre: "Sherlock", categoria: "Mystery", imagen: "url_de_imagen" }
-];
+    const seccion = document.createElement("section");
+    seccion.classList.add("c-lista");
 
-let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    // Crear el campo de búsqueda
+    const buscador = document.createElement("input");
+    buscador.classList.add("c-buscador");
+    buscador.type = "text";
+    buscador.placeholder = "Buscar programa...";
+    buscador.addEventListener("input", (evento) => buscarShows(evento, shows));
 
-const mostrarFavoritos = () => {
-    const contenedorFavoritos = document.getElementById('favoritos');
-    contenedorFavoritos.innerHTML = ''; // Limpiar favoritos
+    // Crear los botones de filtro por género (usando categorías de TV)
+    const categorias = [
+        "All", "Drama", "Comedy", "Action", "Romance", "Thriller", "Sci-Fi",
+        "Fantasy", "Documentary", "Mystery", "Horror", "Reality", "Family", "News"
+    ];
 
-    favoritos.forEach(fav => {
-        const favoritoDiv = document.createElement('div');
-        favoritoDiv.classList.add('c-favorito-show');
-        favoritoDiv.innerHTML = `
-            <img src="${fav.imagen}" alt="${fav.nombre}">
-            <h3>${fav.nombre}</h3>
-        `;
-        contenedorFavoritos.appendChild(favoritoDiv);
-    });
-};
+    let listaCategorias = categorias.map(categoria => 
+        `<button class="filtro-boton" onclick="filtrarPorCategoria('${categoria}', shows)">${categoria}</button>`
+    ).join('');
 
-const mostrarLista = (pokemones) => {
-    const lista = document.getElementById('app');
-    lista.innerHTML = '';
+    const filtro = document.createElement("div");
+    filtro.classList.add("filtro");
+    filtro.innerHTML = listaCategorias;
 
-    pokemones.forEach(pokemon => {
-        const item = document.createElement('div');
-        item.classList.add('c-lista-serie');
-        item.innerHTML = `
-            <img src="${pokemon.imagen}" alt="${pokemon.nombre}">
-            <h3>${pokemon.nombre}</h3>
-            <button class="agregar-favorito" data-id="${pokemon.id}">Agregar a Favoritos</button>
-        `;
-        lista.appendChild(item);
+    // Generar la lista inicial de shows
+    seccion.innerHTML = generarLista(shows);
 
-        // Evento para agregar a favoritos
-        item.querySelector('.agregar-favorito').addEventListener('click', () => {
-            agregarFavorito(pokemon);
-        });
-    });
-};
+    // Agregar los elementos al DOM
+    app.appendChild(buscador);
+    app.appendChild(filtro);
+    app.appendChild(seccion);
+}
 
-const agregarFavorito = (pokemon) => {
-    if (!favoritos.some(fav => fav.id === pokemon.id)) {
-        favoritos.push(pokemon);
-        localStorage.setItem('favoritos', JSON.stringify(favoritos));
-        mostrarFavoritos(); // Actualizar la vista de favoritos
-    }
-};
+// Generar la lista de programas de TV
+function generarLista(shows) {
+    return shows.map(show => {
+        const id = show.id; // Corregido el id, ya que la propiedad id está directamente en show.
+        return `
+        <div class="c-lista-show show-${id}" onclick="mostrarDetalle(${id})">
+            <p>${show.name}</p>
+            <img src="${show.image ? show.image.medium : 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="60" loading="lazy" alt="${show.name}">
+            <p>${show.premiered || 'Año desconocido'}</p>
+        </div>`;
+    }).join('');
+}
 
-const aplicarFiltro = (categoria) => {
-    let peliculasFiltradas;
-    
+// Función para realizar la búsqueda de programas
+function buscarShows(evento, shows) {
+    const texto = evento.target.value.toLowerCase();
+    const listaFiltrada = texto.length >= 3
+        ? shows.filter(show => 
+            show.name.toLowerCase().includes(texto)
+        )
+        : shows;
+
+    document.querySelector(".c-lista").innerHTML = generarLista(listaFiltrada);
+}
+
+// Función para filtrar los shows por categoría
+async function filtrarPorCategoria(categoria, shows) {
     if (categoria === "All") {
-        peliculasFiltradas = peliculas;
+        mostrarLista(shows); // Mostrar todos los shows si se selecciona "All"
     } else {
-        peliculasFiltradas = peliculas.filter(pelicula => pelicula.categoria === categoria);
-    }
+        try {
+            const respuesta = await fetch(`https://api.tvmaze.com/search/shows?q=${categoria}`);
+            const datos = await respuesta.json();
 
-    mostrarLista(peliculasFiltradas);
+            // Filtrar los programas que tienen la categoría seleccionada
+            const showsFiltrados = datos.filter(show => 
+                show.show.genres.includes(categoria)
+            );
 
-    // Marcar el botón de la categoría activa
-    document.querySelectorAll('.filtro button').forEach(button => {
-        if (button.textContent === categoria) {
-            button.classList.add('activo');
-        } else {
-            button.classList.remove('activo');
+            mostrarLista(showsFiltrados.map(item => item.show)); // Mostrar los shows filtrados por categoría
+        } catch (error) {
+            console.error("Error al filtrar por categoría:", error);
+            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
         }
-    });
-};
+    }
+}
 
-const buscarPelicula = (e) => {
-    const query = e.target.value.toLowerCase();
-    const peliculasFiltradas = peliculas.filter(pelicula =>
-        pelicula.nombre.toLowerCase().includes(query)
-    );
-    mostrarLista(peliculasFiltradas);
-};
+// Función para obtener todos los shows disponibles
+async function obtenerShows() {
+    try {
+        const respuesta = await fetch("https://api.tvmaze.com/shows");
+        const datos = await respuesta.json();
+        mostrarLista(datos); // Mostrar la lista de programas
+    } catch (error) {
+        console.error("Error al obtener los programas:", error);
+        document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
+    }
+}
 
-// Inicializar la vista con todas las películas
-document.addEventListener("DOMContentLoaded", () => {
-    // Mostrar categorías
-    const contenedorCategorias = document.querySelector('.filtro');
-    categorias.forEach(categoria => {
-        const botonCategoria = document.createElement('button');
-        botonCategoria.textContent = categoria;
-        botonCategoria.addEventListener('click', () => aplicarFiltro(categoria));
-        contenedorCategorias.appendChild(botonCategoria);
-    });
-
-    // Agregar evento de búsqueda
-    const buscador = document.querySelector('.c-buscador');
-    buscador.addEventListener('input', buscarPelicula);
-
-    // Mostrar todas las películas al inicio
-    aplicarFiltro("All");
-    mostrarFavoritos();
-});
+// Inicializar la lista de shows al cargar la página
+document.addEventListener("DOMContentLoaded", obtenerShows);
