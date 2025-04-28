@@ -1,24 +1,25 @@
-// Mostrar lista principal de shows
+// Función principal para mostrar la lista de programas
 function mostrarLista(shows) {
     const app = document.getElementById("app");
-    app.innerHTML = ""; // Limpiar
+    app.innerHTML = ""; // Limpia el contenido
 
     const seccion = document.createElement("section");
     seccion.classList.add("c-lista");
 
-    // Campo de búsqueda
+    // Crear el campo de búsqueda
     const buscador = document.createElement("input");
     buscador.classList.add("c-buscador");
     buscador.type = "text";
     buscador.placeholder = "Buscar programa...";
     buscador.addEventListener("input", (evento) => buscarShows(evento, shows));
 
-    // Botones de filtro por género
+    // Crear los botones de filtro por género
     const categorias = [
         "All", "Drama", "Comedy", "Action", "Romance", "Thriller", "Sci-Fi",
         "Fantasy", "Documentary", "Mystery", "Horror", "Reality", "Family", "News"
     ];
-    const listaCategorias = categorias.map(categoria => 
+
+    let listaCategorias = categorias.map(categoria => 
         `<button class="filtro-boton" onclick="filtrarPorCategoria('${categoria}', shows)">${categoria}</button>`
     ).join('');
 
@@ -26,37 +27,41 @@ function mostrarLista(shows) {
     filtro.classList.add("filtro");
     filtro.innerHTML = listaCategorias;
 
-    // Lista inicial
+    // Generar la lista inicial de shows
     seccion.innerHTML = generarLista(shows);
 
-    // Agregar todo al DOM
+    // Agregar los elementos al DOM
     app.appendChild(buscador);
     app.appendChild(filtro);
     app.appendChild(seccion);
 }
 
-// Crear la lista de shows
+// Generar la lista de programas de TV
 function generarLista(shows) {
-    return shows.map(show => `
-        <div class="c-lista-show show-${show.id}" onclick="mostrarDetalle(${show.id})">
-            <p>${show.name}</p>
-            <img src="${show.image ? show.image.medium : 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="60" loading="lazy" alt="${show.name}">
-            <p>${show.premiered || 'Año desconocido'}</p>
-        </div>
-    `).join('');
+    return shows.map(show => {
+        const id = show.id;
+        return `
+        <div class="c-lista-serie" onclick="mostrarDetalle(${id})">
+            <img src="${show.image ? show.image.medium : 'https://via.placeholder.com/210x295?text=No+Image'}" alt="${show.name}" loading="lazy">
+            <h3>${show.name}</h3>
+            <p>${show.premiered ? new Date(show.premiered).getFullYear() : 'Año desconocido'}</p>
+        </div>`;
+    }).join('');
 }
 
-// Búsqueda de shows
+// Función para realizar la búsqueda de programas
 function buscarShows(evento, shows) {
     const texto = evento.target.value.toLowerCase();
     const listaFiltrada = texto.length >= 3
-        ? shows.filter(show => show.name.toLowerCase().includes(texto))
+        ? shows.filter(show => 
+            show.name.toLowerCase().includes(texto)
+        )
         : shows;
 
     document.querySelector(".c-lista").innerHTML = generarLista(listaFiltrada);
 }
 
-// Filtro por categoría
+// Función para filtrar los shows por categoría
 async function filtrarPorCategoria(categoria, shows) {
     if (categoria === "All") {
         mostrarLista(shows);
@@ -72,21 +77,22 @@ async function filtrarPorCategoria(categoria, shows) {
             mostrarLista(showsFiltrados.map(item => item.show));
         } catch (error) {
             console.error("Error al filtrar por categoría:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar la categoría "${categoria}".</p>`;
+            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
         }
     }
 }
 
-// Obtener shows al cargar
+// Función para obtener todos los shows disponibles
 async function obtenerShows() {
     try {
         const respuesta = await fetch("https://api.tvmaze.com/shows");
         const datos = await respuesta.json();
         mostrarLista(datos);
     } catch (error) {
-        console.error("Error al obtener programas:", error);
+        console.error("Error al obtener los programas:", error);
         document.getElementById("app").innerHTML = "<p>Error al cargar los programas.</p>";
     }
 }
 
+// Inicializar la lista de shows al cargar la página
 document.addEventListener("DOMContentLoaded", obtenerShows);
