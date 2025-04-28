@@ -64,21 +64,14 @@ function buscarShows(evento, shows) {
 // Función para filtrar los shows por categoría
 async function filtrarPorCategoria(categoria, shows) {
     if (categoria === "All") {
-        mostrarLista(shows);
+        mostrarLista(shows); // Muestra todos los shows si la categoría es "All"
     } else {
-        try {
-            const respuesta = await fetch(`https://api.tvmaze.com/search/shows?q=${categoria}`);
-            const datos = await respuesta.json();
+        // Filtramos los shows que tienen la categoría seleccionada
+        const showsFiltrados = shows.filter(show => 
+            show.genres.some(genre => genre.toLowerCase() === categoria.toLowerCase())
+        );
 
-            const showsFiltrados = datos.filter(show => 
-                show.show.genres.includes(categoria)
-            );
-
-            mostrarLista(showsFiltrados.map(item => item.show));
-        } catch (error) {
-            console.error("Error al filtrar por categoría:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
-        }
+        mostrarLista(showsFiltrados); // Llamamos a mostrarLista para actualizar la UI
     }
 }
 
