@@ -12,29 +12,9 @@ body {
     padding-bottom: 80px;
 }
 
-/* Splash screen */
-.splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #121212;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.splash-logo {
-    width: 150px;
-    margin-bottom: 20px;
-}
-
 /* Botones */
 button {
-    background-color: #D32F2F; /* Rojo principal */
+    background-color: #D32F2F; /* Rojo de TVMaze */
     border: none;
     cursor: pointer;
     margin: 10px auto;
@@ -49,7 +29,7 @@ button {
 }
 
 button:hover {
-    background-color: #C2185B;
+    background-color: #C2185B; /* Rojo más oscuro */
     transform: scale(1.05);
 }
 
@@ -69,7 +49,7 @@ button:active {
 }
 
 .c-lista-serie {
-    background-color: #1D1D1D;
+    background-color: #1D1D1D; /* Fondo oscuro para las tarjetas */
     width: calc(45% - 20px);
     padding: 20px;
     text-align: center;
@@ -94,7 +74,7 @@ button:active {
 
 .c-lista-serie h3 {
     font-size: 1.2rem;
-    color: #F1F1F1;
+    color: #F1F1F1; /* Texto claro */
     font-weight: bold;
 }
 
@@ -111,7 +91,7 @@ button:active {
     position: fixed;
     bottom: 0;
     left: 0;
-    background: #121212;
+    background: #121212; /* Fondo oscuro */
     width: 100%;
     display: flex;
     justify-content: space-around;
@@ -122,7 +102,7 @@ button:active {
 
 .c-nav-item {
     width: 22%;
-    background-color: #D32F2F;
+    background-color: #D32F2F; /* Rojo de TVMaze */
     color: white;
     text-align: center;
     padding: 14px;
@@ -134,7 +114,7 @@ button:active {
 }
 
 .c-nav-item:hover {
-    background-color: #C2185B;
+    background-color: #C2185B; /* Rojo más oscuro */
     transform: scale(1.07);
 }
 
@@ -142,11 +122,11 @@ button:active {
     transform: scale(0.95);
 }
 
-/* Favoritos */
+/* Mis Series Favoritas */
 .c-unshow {
-    background-color: #333333;
+    background-color: #333333; /* Fondo oscuro para favoritos */
     width: calc(25% - 10px);
-    height: 180px;
+    height: 120px;
     padding: 15px;
     text-align: center;
     color: white;
@@ -163,17 +143,9 @@ button:active {
     transform: scale(1.05);
 }
 
-.c-unshow img {
-    width: 60%;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-/* Favorito especial */
 .c-favorito-show {
-    background-color: #FFB300;
-    color: #222222;
+    background-color: #FFB300; /* Amarillo TVMaze */
+    color: #222222; /* Texto oscuro */
     border-radius: 12px;
     padding: 15px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
@@ -181,8 +153,15 @@ button:active {
 }
 
 .c-favorito-show:hover {
-    background-color: #FF8F00;
+    background-color: #FF8F00; /* Amarillo más oscuro */
     transform: scale(1.05);
+}
+
+.c-favorito-show img {
+    width: 60%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 /* Contadores */
@@ -191,7 +170,7 @@ button:active {
     font-weight: bold;
     text-align: center;
     margin-top: 25px;
-    background-color: #D32F2F;
+    background-color: #D32F2F; /* Rojo TVMaze */
     color: white;
     padding: 12px;
     border-radius: 10px;
@@ -209,7 +188,7 @@ button:active {
 .filtro button {
     padding: 12px 20px;
     font-size: 1.1rem;
-    background-color: #D32F2F;
+    background-color: #D32F2F; /* Rojo TVMaze */
     color: white;
     border: none;
     border-radius: 8px;
@@ -218,7 +197,7 @@ button:active {
 }
 
 .filtro button:hover {
-    background-color: #C2185B;
+    background-color: #C2185B; /* Rojo más oscuro */
     transform: scale(1.05);
 }
 
@@ -229,13 +208,21 @@ button:active {
     padding: 14px;
     margin: 20px auto;
     border-radius: 10px;
-    border: 2px solid #D32F2F;
+    border: 2px solid #D32F2F; /* Rojo TVMaze */
     font-size: 1.2rem;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Ocultar secciones */
+/* Clase activa para el filtro de categorías */
+.filtro button.activo {
+    background-color: #4CAF50;  /* Verde cuando la categoría está seleccionada */
+    color: white;
+    font-weight: bold;
+    transform: scale(1.05);
+}
+
+/* Ocultar elementos */
 .hidden {
     display: none;
 }
@@ -245,9 +232,11 @@ button:active {
     .c-lista-serie {
         width: calc(90% - 20px);
     }
+
     .c-unshow {
         width: calc(45% - 10px);
     }
+
     .c-nav-item {
         width: 24%;
     }
@@ -257,9 +246,11 @@ button:active {
     .c-lista-serie {
         width: 100%;
     }
+
     .c-unshow {
         width: 100%;
     }
+
     .c-nav-item {
         width: 28%;
     }
