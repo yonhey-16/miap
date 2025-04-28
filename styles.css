@@ -38,8 +38,9 @@ button:active {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Lista de Series */
-.c-lista {
+/* Lista de Series (Usado para "Mios" también) */
+.c-lista,
+.c-mios { 
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -48,7 +49,8 @@ button:active {
     padding: 0 10px;
 }
 
-.c-lista-serie {
+/* Para las tarjetas de Mios */
+.c-unshow {
     background-color: #1D1D1D; /* Fondo oscuro para las tarjetas */
     width: calc(45% - 20px);
     padding: 20px;
@@ -61,7 +63,7 @@ button:active {
     align-items: center;
 }
 
-.c-lista-serie img {
+.c-unshow img {
     width: 100%;
     max-width: 150px;
     height: auto;
@@ -72,17 +74,16 @@ button:active {
     transition: transform 0.3s ease;
 }
 
-.c-lista-serie h3 {
-    font-size: 1.2rem;
+.c-unshow p {
+    font-size: 1rem;
     color: #F1F1F1; /* Texto claro */
-    font-weight: bold;
 }
 
-.c-lista-serie:hover {
+.c-unshow:hover {
     transform: scale(1.04);
 }
 
-.c-lista-serie img:hover {
+.c-unshow img:hover {
     transform: rotate(2deg);
 }
 
@@ -123,26 +124,6 @@ button:active {
 }
 
 /* Mis Series Favoritas */
-.c-unshow {
-    background-color: #333333; /* Fondo oscuro para favoritos */
-    width: calc(25% - 10px);
-    height: 120px;
-    padding: 15px;
-    text-align: center;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease;
-}
-
-.c-unshow:hover {
-    transform: scale(1.05);
-}
-
 .c-favorito-show {
     background-color: #FFB300; /* Amarillo TVMaze */
     color: #222222; /* Texto oscuro */
@@ -229,29 +210,13 @@ button:active {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .c-lista-serie {
-        width: calc(90% - 20px);
-    }
-
     .c-unshow {
         width: calc(45% - 10px);
-    }
-
-    .c-nav-item {
-        width: 24%;
     }
 }
 
 @media (max-width: 480px) {
-    .c-lista-serie {
-        width: 100%;
-    }
-
     .c-unshow {
         width: 100%;
-    }
-
-    .c-nav-item {
-        width: 28%;
     }
 }

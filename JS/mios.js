@@ -17,31 +17,29 @@ async function General() {
 
 async function mostrarMios() {
     const app = document.getElementById("app");
-    app.innerHTML = "";
+    app.innerHTML = ""; // Limpiar el contenido anterior
 
     const seccion = document.createElement("section");
-    seccion.classList.add("c-lista");
-    seccion.classList.add("c-mios");
+    seccion.classList.add("c-lista"); // Usar la misma clase de lista
+    seccion.classList.add("c-mios");  // Clase para "Mios" (hereda el estilo de lista)
 
     let misShows = ""; // Aquí se irá armando el HTML
 
-    for (let i = 0; i < totalShows; i++) {  // Usamos totalShows como el límite superior
-        const show = shows[i];  // Obtenemos el show por el índice
+    // Mostrar un máximo de 20 cuadros, no más
+    const maxCuadros = 20;
 
-        if (misIds.includes(show.id)) {
-            // Si tengo ese show, lo mostramos
-            misShows += `
-            <div class="c-unshow c-mios-show show-${show.id}" onclick="mostrarDetalle('${show.id}')">
-                <img src="${show.image?.medium || 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="70" loading="lazy" alt="${show.name}">
-                <p>${show.name}</p>
+    for (let i = 0; i < Math.min(misIds.length, maxCuadros); i++) {  // Limita a 20
+        const id = misIds[i];
+        misShows += `
+            <div class="c-unshow c-mios-show show-${id}">
+                <p>Cuadro ${i + 1}</p>  <!-- Mostrar el número de cuadro -->
             </div>`;
-        }
     }
 
     seccion.innerHTML = misShows;
 
     const contador = document.createElement("p");
-    contador.textContent = `${misIds.length} / ${totalShows}`;
+    contador.textContent = `${misIds.length} / ${totalShows}`;  // Muestra la cantidad de "Mios" seleccionados
     app.appendChild(contador);
     app.appendChild(seccion);
 }
