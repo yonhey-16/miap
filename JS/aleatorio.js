@@ -1,24 +1,32 @@
-var misNumeros = JSON.parse(localStorage.getItem("misNumeros")) || [];
+let misNumeros = JSON.parse(localStorage.getItem("misNumeros")) || [];
 
 const totalShows = 250; // Puedes ajustar según cuántos shows quieres permitir
 
+// Función para mostrar 4 shows aleatorios
 async function mostrarAleatorio() {
     const app = document.getElementById("app");
 
     let showsAleatorios = '<section class="c-aleatorio c-lista">';
 
+    // Mostrar 4 shows aleatorios
     for (let i = 0; i < 4; i++) {
         let num = Math.floor(Math.random() * totalShows) + 1;
 
+        // Asegurarse de que no se repita un show
         if (!misNumeros.includes(num)) {
             misNumeros.push(num);
             localStorage.setItem("misNumeros", JSON.stringify(misNumeros));
+        } else {
+            i--; // Si ya está en misNumeros, intenta con otro número
+            continue;
         }
 
         try {
+            // Hacer la solicitud para obtener los detalles del show
             const res = await fetch(`https://api.tvmaze.com/shows/${num}`);
             const show = await res.json();
 
+            // Agregar el show a la lista
             showsAleatorios += `
             <div class="c-lista-serie c-un_aleatorio">
                 <p>#${show.id}</p>
@@ -34,4 +42,5 @@ async function mostrarAleatorio() {
     app.innerHTML = showsAleatorios;
 }
 
+// Llamar a la función para mostrar los shows aleatorios
 mostrarAleatorio();
