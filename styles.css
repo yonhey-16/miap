@@ -213,6 +213,16 @@ button:active {
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Clase activa para el filtro de categorías */
+.filtro button.activo {
+    background-color: #4CAF50;  /* Verde cuando la categoría está seleccionada */
+    color: white;
+    font-weight: bold;
+    transform: scale(1.05);
+}
+
+/* Ocultar elementos */
 .hidden {
     display: none;
 }

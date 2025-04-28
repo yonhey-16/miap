@@ -19,34 +19,22 @@ function mostrarLista(shows) {
         "Fantasy", "Documentary", "Mystery", "Horror", "Reality", "Family", "News"
     ];
 
+    // Crear botones de categorías con la funcionalidad de filtrar
     let listaCategorias = categorias.map(categoria => 
-        `<button class="filtro-boton" onclick="filtrarPorCategoria('${categoria}', shows)">${categoria}</button>`
+        `<button class="filtro-boton" id="btn-${categoria}" onclick="filtrarPorCategoria('${categoria}', shows)">${categoria}</button>`
     ).join('');
 
     const filtro = document.createElement("div");
     filtro.classList.add("filtro");
     filtro.innerHTML = listaCategorias;
 
-    // Generar la lista inicial de shows
-    seccion.innerHTML = generarLista(shows);
-
-    // Agregar los elementos al DOM
+    // Agregar filtro al DOM
     app.appendChild(buscador);
     app.appendChild(filtro);
-    app.appendChild(seccion);
-}
 
-// Generar la lista de programas de TV
-function generarLista(shows) {
-    return shows.map(show => {
-        const id = show.id; // Corregido el id, ya que la propiedad id está directamente en show.
-        return `
-        <div class="c-lista-show show-${id}" onclick="mostrarDetalle(${id})">
-            <p>${show.name}</p>
-            <img src="${show.image ? show.image.medium : 'https://via.placeholder.com/210x295?text=No+Image'}" width="auto" height="60" loading="lazy" alt="${show.name}">
-            <p>${show.premiered || 'Año desconocido'}</p>
-        </div>`;
-    }).join('');
+    // Mostrar la lista inicial de shows
+    seccion.innerHTML = generarLista(shows);
+    app.appendChild(seccion);
 }
 
 // Función para realizar la búsqueda de programas
@@ -63,22 +51,28 @@ function buscarShows(evento, shows) {
 
 // Función para filtrar los shows por categoría
 async function filtrarPorCategoria(categoria, shows) {
-    if (categoria === "All") {
-        mostrarLista(shows); // Mostrar todos los shows si se selecciona "All"
-    } else {
-        try {
-            const respuesta = await fetch(`https://api.tvmaze.com/search/shows?q=${categoria}`);
-            const datos = await respuesta.json();
+    // Cambiar la clase del botón seleccionado
+    const botonesCategoria = document.querySelectorAll('.filtro-boton');
+    botonesCategoria.forEach(btn => {
+        btn.classList.remove('activo');  // Eliminar clase activa de todos los botones
+    });
 
-            // Filtrar los programas que tienen la categoría seleccionada
-            const showsFiltrados = datos.filter(show => 
-                show.show.genres.includes(categoria)
-            );
-
-            mostrarLista(showsFiltrados.map(item => item.show)); // Mostrar los shows filtrados por categoría
-        } catch (error) {
-            console.error("Error al filtrar por categoría:", error);
-            document.getElementById("app").innerHTML = `<p>Error al cargar los programas de la categoría "${categoria}".</p>`;
-        }
+    const btnSeleccionado = document.getElementById(`btn-${categoria}`);
+    if (btnSeleccionado) {
+        btnSeleccionado.classList.add('activo');  // Añadir clase activa al botón seleccionado
     }
+
+    let showsFiltrados;
+
+    if (categoria === "All") {
+        // Mostrar todos los shows si se selecciona "All"
+        showsFiltrados = shows;
+    } else {
+        // Filtrar los programas que tienen la categoría seleccionada
+        showsFiltrados = shows.filter(show =>
+            show.genres.includes(categoria)
+        );
+    }
+
+    mostrarLista(showsFiltrados);  // Mostrar los shows filtrados por categoría
 }
