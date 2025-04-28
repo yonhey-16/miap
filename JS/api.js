@@ -1,13 +1,15 @@
-let pokemones = [];
-let totalPokes = 1026; /* debe agregarse uno más ya que el índice comienza en 0 */
+let shows = [];
+let totalShows = 0; // Lo vamos a actualizar después
 
 async function conexionLista() {
-    const res = await fetch('https://api.tvmaze.com/shows');  // Corregí el endpoint
+    const res = await fetch('https://api.tvmaze.com/shows');
     const data = await res.json();
-    return data;  // Ajustado para que devuelva la lista completa
+    return data; // Devuelve el array completo de shows
 }
 
 async function General() {
-    const infoPokes = await conexionLista();
-    mostrarLista(infoPokes);
+    const infoShows = await conexionLista();
+    shows = infoShows; // Guardamos la lista
+    totalShows = shows.length;
+    mostrarLista(shows); // Llamamos a tu función mostrarLista()
 }
