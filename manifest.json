@@ -1,21 +1,23 @@
 {
-  "name": "Series TVMaze App",
-  "short_name": "SeriesApp",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#D32F2F",
-  "description": "App para buscar, filtrar y guardar series favoritas usando TVMaze API",
-  "icons": [
-    {
-      "src": "icono.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icono.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
+    "name": "TVMazeApp",
+    "short_name": "TVMaze",
+    "description": "Aplicación web para explorar series y shows con TVMaze API",
+    "start_url": ".",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#1c1c1c",
+    "theme_color": "#ff4081",
+    "icons": [
+      {
+        "src": "icons/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "icons/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
